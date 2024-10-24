@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorful Weather Forecast</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(90deg, #70a1ff, #ff6b81);
+            margin: 0;
+            padding: 0;
+                }
+        .container {
+            max-width: 800px; margin: 20px auto;
+            padding: 20px; background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);  border-radius: 10px;  border: 2px solid #007BFF; 
+        }
+                h1 {
+            text-align: center;
+                color: #333;
+            }
+        #search-box {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #search-input {
+            padding: 10px;
+            border: none;
+            border-bottom: 2px solid #007BFF;
+            border-radius: 5px;
+
+            width: 70%;
+            font-size: 16px;
+        }
+
+        #search-button {
+            padding: 10px 20px;
+            background-color: #007BFF;  color: #fff;
+            border: none;border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px; }
+
+
+        #result {
+            text-align: center;    }
+
+        #weather-icon { width: 100px;
+            height: 100px;
+        }
+        #details {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+        justify-content: space-between;  }
+        .detail-box {
+            padding: 20px;
+            margin: 10px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);border: 1px solid #ccc;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .detail-box:nth-child(odd) {
+            background-color: #007BFF;
+            color: #fff;
+        }
+        .detail-box:nth-child(even) {
+            background-color: #FF6B6B;
+            color: #fff;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>Colorful Weather Forecast</h1>
+        <div id="search-box">
+            <input type="text" id="search-input" placeholder="Enter a country name">
+            <button id="search-button">Search</button>
+        </div>
+            <div id="result">
+            <h2>Country: <span id="country"></span></h2>
+            <h3>Time: <span id="time"></span></h3>
+            <h3>Temperature: <span id="temperature"></span>&deg;C</h3>
+            <h3>Weather: <span id="weather"></span></h3>
+            <img id="weather-icon" src="" alt="Weather Icon">
+        </div>
+
+        <div id="details">
+            <div class="detail-box">
+                <span class="detail-label">Air Quality:</span>
+                <span id="air-quality"></span>
+            </div>
+
+            <div class="detail-box">
+                <span class="detail-label">Wind Speed:</span>
+                <span id="wind-speed"></span> m/s
+            </div>
+
+                <div class="detail-box">
+                <span class="detail-label">Humidity:</span>
+                <span id="humidity"></span>%
+                </div>
+            <div class="detail-box">
+                <span class="detail-label">Feels Like:</span>
+                <span id="feels-like"></span>&deg;C
+            </div>
+            <div class="detail-box">
+                <span class="detail-label">Visibility:</span>
+                <span id="visibility"></span> meters
+            </div>
+
+
+            <div class="detail-box">
+                <span class="detail-label">Pressure:</span>
+                <span id="pressure"></span> hPa
+            </div>
+             <div class="detail-box">
+                <span class="detail-label">UV Index:</span>
+                <span id="uv-index"></span>
+            </div>
+            <div class="detail-box">
+                <span class="detail-label">Precipitation:</span>
+                <span id="precipitation"></span> mm
+            </div>
+            <div class="detail-box">
+                <span class="detail-label">Sunset:</span>
+                <span id="sunset"></span>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        const apiKey = '7509ad08cf4a640f0e58a41b2c5bfe47'; const searchButton = document.getElementById('search-button');
+        const searchInput = document.getElementById('search-input');
+
+        const countryElement = document.getElementById('country');
+        const timeElement = document.getElementById('time');
+        const temperatureElement = document.getElementById('temperature');
+        const weatherElement = document.getElementById('weather');
+
+        const weatherIcon = document.getElementById('weather-icon');
+        const airQualityElement = document.getElementById('air-quality');
+
+        const windSpeedElement = document.getElementById('wind-speed');  
+        const humidityElement = document.getElementById('humidity');
+
+        const feelsLikeElement = document.getElementById('feels-like');
+
+        const visibilityElement = document.getElementById('visibility');
+        const pressureElement = document.getElementById('pressure');
+        const uvIndexElement = document.getElementById('uv-index');
+
+        const precipitationElement = document.getElementById('precipitation');
+        const sunsetElement = document.getElementById('sunset');
+
+
+
+        searchButton.addEventListener('click', () => {
+
+            const countryName = searchInput.value;
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${countryName}&appid=${apiKey}&units=metric`)
+                .then(response => response.json())
+                .then(data => {
+                    countryElement.textContent = countryName;
+                    const currentTime = new Date(data.dt * 1000);
+                    timeElement.textContent = currentTime.toLocaleTimeString();
+                    temperatureElement.textContent = data.main.temp;
+                    weatherElement.textContent = data.weather[0].description;
+                    const iconUrl = `http://openweathermap.org/img/w/${data.weather[0].icon}.png`;
+                    weatherIcon.src = iconUrl;
+                    airQualityElement.textContent = data.main.aqi;
+                    windSpeedElement.textContent = data.wind.speed;
+                    humidityElement.textContent = data.main.humidity;
+                    feelsLikeElement.textContent = data.main.feels_like;
+                    visibilityElement.textContent = data.visibility;
+                    pressureElement.textContent = data.main.pressure;
+                    uvIndexElement.textContent = data.uvi;
+                    precipitationElement.textContent = data.rain ? data.rain['1h'] : '0';
+                    const sunsetTime = new Date(data.sys.sunset * 1000);
+                    sunsetElement.textContent = sunsetTime.toLocaleTimeString();
+
+                })
+
+
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+        });
+
+    </script>
+
+</body>
+</html>
